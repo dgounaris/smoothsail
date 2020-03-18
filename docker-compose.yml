@@ -1,0 +1,17 @@
+version: '3'
+services:
+  smoothsail:
+    build: .
+    ports:
+      - "8000:8080"
+    depends_on:
+      - postgres
+  postgres:
+    image: "postgres:12-alpine"
+    env_file:
+      - database.env # configure postgres
+    #volumes:
+    #  - database-data:/var/lib/postgresql/data/ # persist data even if container shuts down
+
+#volumes:
+#  database-data:

@@ -1,4 +1,4 @@
-package smoothsail.domain.commit
+package smoothsail.domain
 
 enum class BuildBranchStatus {
   PENDING,

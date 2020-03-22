@@ -5,13 +5,15 @@ import smoothsail.domain.BuildBranchDetails
 import smoothsail.domain.BuildBranchStatus
 import smoothsail.operations.git.GitBranchDetailsRetriever
 import smoothsail.repository.BuildBranchDetailsRepository
+import smoothsail.tools.SmoothsailClock
 import java.time.Clock
 import java.time.LocalDateTime
 
 @Component
 class LatestBuildBranchDetailsRetriever(
     private val gitBranchDetailsRetriever: GitBranchDetailsRetriever,
-    private val buildBranchDetailsRepository: BuildBranchDetailsRepository
+    private val buildBranchDetailsRepository: BuildBranchDetailsRepository,
+    private val smoothsailClock: SmoothsailClock
 ) {
 
   fun retrieve(repository: String, targetBranch: String): BuildBranchDetails {
@@ -35,7 +37,7 @@ class LatestBuildBranchDetailsRetriever(
         previousBuildBranchDetailsId = null,
         currentBuildBranchName = targetBranch,
         buildBranchHash = upstreamBranchLatestCommitHash,
-        createdAt = LocalDateTime.now(Clock.systemUTC()),
+        createdAt = smoothsailClock.now(),
         status = BuildBranchStatus.MERGED
     )
     buildBranchDetailsRepository.save(upstreamBranchDetails)

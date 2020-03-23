@@ -3,6 +3,8 @@ package smoothsail.domain.service
 import org.junit.Test
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.mock
+import org.mockito.Mockito.times
+import org.mockito.Mockito.verify
 import smoothsail.domain.BuildBranchDetails
 import smoothsail.domain.BuildBranchStatus
 import smoothsail.operations.git.GitBranchDetailsRetriever
@@ -56,6 +58,7 @@ internal class LatestBuildBranchDetailsRetrieverTest {
     val result = latestBuildBranchDetailsRetriever.retrieve(repository, targetBranch)
     assertEquals(upstreamBranchLatestCommitHash, result.buildBranchHash)
     assertEquals(BuildBranchStatus.MERGED, result.status)
+    verify(buildBranchDetailsRepository, times(1)).save(result)
   }
 
 }

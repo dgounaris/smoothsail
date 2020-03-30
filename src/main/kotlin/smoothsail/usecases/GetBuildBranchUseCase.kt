@@ -8,8 +8,8 @@ import smoothsail.domain.service.RebasedBuildBranchGenerator
 class GetBuildBranchUseCase(
     private val latestBuildBranchDetailsRetriever: LatestBuildBranchDetailsRetriever,
     private val rebasedBuildBranchGenerator: RebasedBuildBranchGenerator
-) : UseCase<BuildBranchUseCaseInput, String> {
-  override fun execute(input: BuildBranchUseCaseInput): String {
+) : UseCase<GetBuildBranchUseCaseInput, String> {
+  override fun execute(input: GetBuildBranchUseCaseInput): String {
     val latestBuildBranchDetails = latestBuildBranchDetailsRetriever.retrieve(
         repository = input.repository,
         targetBranch = input.targetBranch
@@ -18,7 +18,7 @@ class GetBuildBranchUseCase(
   }
 }
 
-data class BuildBranchUseCaseInput(
+data class GetBuildBranchUseCaseInput(
     val repository: String,
     val originBranch: String,
     val targetBranch: String

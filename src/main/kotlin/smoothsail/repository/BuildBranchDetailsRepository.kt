@@ -12,4 +12,10 @@ interface BuildBranchDetailsRepository: JpaRepository<BuildBranchDetails, Long> 
       targetBranch: String,
       status: List<BuildBranchStatus>
   ): BuildBranchDetails?
+
+  fun findFirstByRepositoryAndCurrentBuildBranchNameAndStatusInOrderByCreatedAtDesc(
+      repository: String,
+      currentBuildBranchName: String,
+      status: List<BuildBranchStatus>
+  ): BuildBranchDetails?
 }

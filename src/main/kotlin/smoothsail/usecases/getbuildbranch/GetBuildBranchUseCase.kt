@@ -1,8 +1,9 @@
-package smoothsail.usecases
+package smoothsail.usecases.getbuildbranch
 
 import org.springframework.stereotype.Component
 import smoothsail.domain.service.LatestBuildBranchDetailsRetriever
 import smoothsail.domain.service.RebasedBuildBranchGenerator
+import smoothsail.usecases.UseCase
 
 @Component
 class GetBuildBranchUseCase(

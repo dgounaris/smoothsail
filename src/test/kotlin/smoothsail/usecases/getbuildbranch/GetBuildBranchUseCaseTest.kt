@@ -1,6 +1,5 @@
-package smoothsail.usecases
+package smoothsail.usecases.getbuildbranch
 
-import org.junit.Test
 import org.mockito.Mockito.mock
 import smoothsail.domain.service.LatestBuildBranchDetailsRetriever
 import smoothsail.domain.service.RebasedBuildBranchGenerator

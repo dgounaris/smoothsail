@@ -5,5 +5,6 @@ enum class BuildBranchStatus {
   SUCCESS,
   FAILURE,
   MERGED,
-  CONFLICT
+  CONFLICT,
+  ABORTED
 }

@@ -37,9 +37,15 @@ class SuccessUpdateBuildBranchAction(
 }
 
 @Component
-class FailureUpdateBuildBranchAction: UpdateBuildBranchAction {
+class FailureUpdateBuildBranchAction(
+        private val buildBranchDetailsRepository: BuildBranchDetailsRepository
+): UpdateBuildBranchAction {
   override fun execute(buildBranchDetails: BuildBranchDetails) {
-    // do nothing
+      val updated = buildBranchDetails.copy(
+              status = BuildBranchStatus.FAILURE
+      )
+      buildBranchDetailsRepository.save(updated)
+      // todo here there will be a logic to call a webhook so that jenkins aborts the next ones, and then reschedules
   }
 }
 

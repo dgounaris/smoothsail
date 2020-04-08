@@ -1,5 +1,7 @@
 package smoothsail.domain
 
+import smoothsail.tools.SmoothsailClock
+import java.time.Clock
 import java.time.LocalDateTime
 import javax.persistence.Column
 import javax.persistence.Entity
@@ -14,24 +16,24 @@ data class BuildBranchDetails(
     val id: Long = 0,
 
     @Column(nullable = false)
-    val repository: String,
+    val repository: String = "",
 
     @Column(nullable = false)
-    val originBranch: String?,
+    val originBranch: String = "",
 
     @Column(nullable = false)
-    val targetBranch: String,
+    val targetBranch: String = "",
 
     @Column(nullable = false)
-    val previousBuildBranchDetailsId: Long?,
+    val previousBuildBranchDetailsId: Long = 0,
 
     @Column(nullable = false)
-    val currentBuildBranchName: String,
+    val currentBuildBranchName: String = "",
 
     @Column(nullable = false)
-    val buildBranchHash: String,
+    val buildBranchHash: String = "",
 
-    val createdAt: LocalDateTime,
+    val createdAt: LocalDateTime = LocalDateTime.now(Clock.systemUTC()),
 
-    val status: BuildBranchStatus
+    val status: BuildBranchStatus = BuildBranchStatus.PENDING
 )

@@ -3,6 +3,7 @@ package smoothsail.domain.service
 import org.springframework.stereotype.Component
 import smoothsail.domain.BuildBranchDetails
 import smoothsail.domain.BuildBranchStatus
+import smoothsail.repository.BuildBranchDetailsRepository
 
 @Component
 class UpdateBuildBranchActionSelectionStrategy(
@@ -24,9 +25,14 @@ interface UpdateBuildBranchAction {
 }
 
 @Component
-class SuccessUpdateBuildBranchAction: UpdateBuildBranchAction {
+class SuccessUpdateBuildBranchAction(
+        private val buildBranchDetailsRepository: BuildBranchDetailsRepository
+): UpdateBuildBranchAction {
   override fun execute(buildBranchDetails: BuildBranchDetails) {
-    // do nothing
+      val updated = buildBranchDetails.copy(
+            status = BuildBranchStatus.SUCCESS
+      )
+      buildBranchDetailsRepository.save(updated)
   }
 }
 

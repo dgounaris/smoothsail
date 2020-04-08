@@ -27,9 +27,7 @@ internal class LatestBuildBranchDetailsRetrieverTest {
     val latestCommitHash = "1q2w3e4r"
     val latestPersisted = BuildBranchDetails(
         repository = repository,
-        originBranch = null,
         targetBranch = targetBranch,
-        previousBuildBranchDetailsId = null,
         currentBuildBranchName = targetBranch,
         buildBranchHash = latestCommitHash,
         createdAt = smoothsailClock.now(),

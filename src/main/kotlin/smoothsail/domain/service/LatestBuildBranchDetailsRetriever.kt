@@ -32,9 +32,7 @@ class LatestBuildBranchDetailsRetriever(
     val upstreamBranchLatestCommitHash = gitBranchDetailsRetriever.retrieve(repository, targetBranch).lastCommitHash
     val upstreamBranchDetails = BuildBranchDetails(
         repository = repository,
-        originBranch = null,
         targetBranch = targetBranch,
-        previousBuildBranchDetailsId = null,
         currentBuildBranchName = targetBranch,
         buildBranchHash = upstreamBranchLatestCommitHash,
         createdAt = smoothsailClock.now(),

@@ -13,9 +13,8 @@ interface BuildBranchDetailsRepository: JpaRepository<BuildBranchDetails, Long> 
       status: List<BuildBranchStatus>
   ): BuildBranchDetails?
 
-  fun findFirstByRepositoryAndCurrentBuildBranchNameAndStatusInOrderByCreatedAtDesc(
-      repository: String,
-      currentBuildBranchName: String,
+  fun findFirstByIdAndStatusIn(
+      id: Long,
       status: List<BuildBranchStatus>
   ): BuildBranchDetails?
 }

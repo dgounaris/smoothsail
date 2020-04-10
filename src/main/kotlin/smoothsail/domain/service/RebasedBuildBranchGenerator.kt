@@ -14,13 +14,13 @@ class RebasedBuildBranchGenerator(
     private val buildBranchDetailsRepository: BuildBranchDetailsRepository,
     private val smoothsailClock: SmoothsailClock
 ) {
-  fun generate(originBranch: String, latestBuildBranchDetails: BuildBranchDetails): String {
+  fun generateAndSave(originBranch: String, latestBuildBranchDetails: BuildBranchDetails): BuildBranchDetails {
     val rebasedBranchDetails = gitBranchRebaseOperator.operate(
         originBranch,
         latestBuildBranchDetails.currentBuildBranchName,
         "$originBranch-rebasedon-${latestBuildBranchDetails.currentBuildBranchName}"
     )
-    return saveToRepository(rebasedBranchDetails, latestBuildBranchDetails).currentBuildBranchName
+    return saveToRepository(rebasedBranchDetails, latestBuildBranchDetails)
   }
 
   private fun saveToRepository(rebasedBranch: GitBranchDetails, latestBuildBranchDetails: BuildBranchDetails) =

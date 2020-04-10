@@ -47,7 +47,7 @@ internal class RebasedBuildBranchGeneratorTest {
             status = BuildBranchStatus.MERGED
         )
     )
-    val result = rebasedBuildBranchGenerator.generate(origin, latestPersisted)
+    val result = rebasedBuildBranchGenerator.generateAndSave(origin, latestPersisted)
     assertEquals("$origin-rebasedon-${latestPersisted.currentBuildBranchName}", result)
   }
 }

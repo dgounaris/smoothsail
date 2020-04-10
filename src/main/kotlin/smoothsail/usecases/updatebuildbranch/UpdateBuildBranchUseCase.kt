@@ -5,29 +5,33 @@ import smoothsail.domain.BuildBranchDetails
 import smoothsail.domain.BuildBranchStatus
 import smoothsail.domain.service.UpdateBuildBranchActionSelectionStrategy
 import smoothsail.repository.BuildBranchDetailsRepository
+import smoothsail.repository.JobBuildDetailsRepository
 import smoothsail.usecases.UseCase
 
 @Component
 class UpdateBuildBranchUseCase(
     private val updateBuildBranchActionSelectionStrategy: UpdateBuildBranchActionSelectionStrategy,
-    private val buildBranchDetailsRepository: BuildBranchDetailsRepository
+    private val buildBranchDetailsRepository: BuildBranchDetailsRepository,
+    private val jobBuildDetailsRepository: JobBuildDetailsRepository
 ): UseCase<UpdateBuildBranchUseCaseInput, Unit> {
   override fun execute(input: UpdateBuildBranchUseCaseInput) {
-    val pendingEntry = getPendingBranchEntry(input.repository, input.buildBranch)
-    updateBuildBranchActionSelectionStrategy.select(input.status).execute(pendingEntry)
+    val pendingEntry = getPendingBranchEntry(input.jobName, input.buildNumber)
+    updateBuildBranchActionSelectionStrategy.select(input.status).execute(pendingEntry, input.jobName, input.buildNumber)
   }
 
-  private fun getPendingBranchEntry(repository: String, buildBranch: String): BuildBranchDetails {
-    return buildBranchDetailsRepository.findFirstByRepositoryAndCurrentBuildBranchNameAndStatusInOrderByCreatedAtDesc(
-        repository,
-        buildBranch,
+  private fun getPendingBranchEntry(job: String, build: Long): BuildBranchDetails {
+    val buildBranchDetailsId = jobBuildDetailsRepository.findByJobNameAndBuildNumber(job, build)
+        ?.buildBranchDetailsId ?: throw NoSuchElementException()
+
+    return buildBranchDetailsRepository.findFirstByIdAndStatusIn(
+        buildBranchDetailsId,
         listOf(BuildBranchStatus.PENDING)
     ) ?: throw NoSuchElementException()
   }
 }
 
 class UpdateBuildBranchUseCaseInput (
-  val repository: String,
-  val buildBranch: String,
+  val jobName: String,
+  val buildNumber: Long,
   val status: BuildBranchStatus
 )

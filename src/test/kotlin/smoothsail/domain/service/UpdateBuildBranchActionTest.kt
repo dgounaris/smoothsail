@@ -13,7 +13,7 @@ internal class UpdateBuildBranchActionTest {
     @Test
     fun `Entry properly updated on success`() {
         val original = BuildBranchDetails()
-        successUpdateBuildBranchAction.execute(original)
+        successUpdateBuildBranchAction.execute(original, null, null)
         Mockito.verify(buildBranchDetailsRepository, Mockito.times(1)).save(original.copy(status = BuildBranchStatus.SUCCESS))
     }
 }

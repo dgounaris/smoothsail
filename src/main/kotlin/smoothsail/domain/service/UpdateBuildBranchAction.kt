@@ -21,14 +21,26 @@ class UpdateBuildBranchActionSelectionStrategy(
 }
 
 interface UpdateBuildBranchAction {
-  fun execute(buildBranchDetails: BuildBranchDetails)
+  fun execute(buildBranchDetails: BuildBranchDetails, jobName: String?, buildNumber: Long?)
+}
+
+@Component
+class StartedUpdateBuildBranchAction(
+    private val buildBranchDetailsRepository: BuildBranchDetailsRepository
+): UpdateBuildBranchAction {
+  override fun execute(buildBranchDetails: BuildBranchDetails, jobName: String?, buildNumber: Long?) {
+    val updated = buildBranchDetails.copy(
+        status = BuildBranchStatus.STARTED
+    )
+    buildBranchDetailsRepository.save(updated)
+  }
 }
 
 @Component
 class SuccessUpdateBuildBranchAction(
         private val buildBranchDetailsRepository: BuildBranchDetailsRepository
 ): UpdateBuildBranchAction {
-  override fun execute(buildBranchDetails: BuildBranchDetails) {
+  override fun execute(buildBranchDetails: BuildBranchDetails, jobName: String?, buildNumber: Long?) {
       val updated = buildBranchDetails.copy(
             status = BuildBranchStatus.SUCCESS
       )
@@ -40,18 +52,20 @@ class SuccessUpdateBuildBranchAction(
 class FailureUpdateBuildBranchAction(
         private val buildBranchDetailsRepository: BuildBranchDetailsRepository
 ): UpdateBuildBranchAction {
-  override fun execute(buildBranchDetails: BuildBranchDetails) {
+  override fun execute(buildBranchDetails: BuildBranchDetails, jobName: String?, buildNumber: Long?) {
       val updated = buildBranchDetails.copy(
               status = BuildBranchStatus.FAILURE
       )
       buildBranchDetailsRepository.save(updated)
       // todo here there will be a logic to call a webhook so that jenkins aborts the next ones, and then reschedules
   }
+
+
 }
 
 @Component
 class NullUpdateBuildBranchAction: UpdateBuildBranchAction {
-  override fun execute(buildBranchDetails: BuildBranchDetails) {
+  override fun execute(buildBranchDetails: BuildBranchDetails, jobName: String?, buildNumber: Long?) {
     // do nothing
   }
 }

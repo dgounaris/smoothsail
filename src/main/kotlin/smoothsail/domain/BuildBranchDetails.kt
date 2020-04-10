@@ -1,6 +1,5 @@
 package smoothsail.domain
 
-import smoothsail.tools.SmoothsailClock
 import java.time.Clock
 import java.time.LocalDateTime
 import javax.persistence.Column
@@ -12,7 +11,7 @@ import javax.persistence.Id
 @Entity
 data class BuildBranchDetails(
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     val id: Long = 0,
 
     @Column(nullable = false)

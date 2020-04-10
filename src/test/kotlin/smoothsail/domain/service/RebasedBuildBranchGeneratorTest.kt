@@ -35,19 +35,20 @@ internal class RebasedBuildBranchGeneratorTest {
         createdAt = smoothsailClock.now(),
         status = BuildBranchStatus.MERGED
     )
-    `when`(gitBranchRebaseOperator.operate(origin, latestPersisted.currentBuildBranchName, "$origin-rebasedon-${latestPersisted.currentBuildBranchName}"))
-        .thenReturn(GitBranchDetails("$origin-rebasedon-${latestPersisted.currentBuildBranchName}", "q1w2e3r4"))
-    `when`(buildBranchDetailsRepository.save(ArgumentMatchers.any<BuildBranchDetails>())).thenReturn(
-        BuildBranchDetails(
+    val newlyPersisted = BuildBranchDetails(
             repository = repository,
             targetBranch = targetBranch,
             currentBuildBranchName = "$origin-rebasedon-${latestPersisted.currentBuildBranchName}",
             buildBranchHash = "q1w2e3r4",
             createdAt = smoothsailClock.now(),
             status = BuildBranchStatus.MERGED
-        )
+    )
+    `when`(gitBranchRebaseOperator.operate(origin, latestPersisted.currentBuildBranchName, "$origin-rebasedon-${latestPersisted.currentBuildBranchName}"))
+        .thenReturn(GitBranchDetails("$origin-rebasedon-${latestPersisted.currentBuildBranchName}", "q1w2e3r4"))
+    `when`(buildBranchDetailsRepository.save(ArgumentMatchers.any<BuildBranchDetails>())).thenReturn(
+        newlyPersisted
     )
     val result = rebasedBuildBranchGenerator.generateAndSave(origin, latestPersisted)
-    assertEquals("$origin-rebasedon-${latestPersisted.currentBuildBranchName}", result)
+    assertEquals(newlyPersisted, result)
   }
 }

@@ -50,6 +50,8 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-web"
     implementation "org.postgresql:postgresql"
 
+    implementation "org.eclipse.jgit:org.eclipse.jgit:5.7.0.202003110725-r"
+
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
     // Use the Kotlin test library.

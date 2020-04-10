@@ -10,4 +10,6 @@ interface JobBuildDetailsRepository: JpaRepository<JobBuildDetails, Long> {
       jobName: String,
       buildNumber: Long
   ): JobBuildDetails?
+
+  fun findByBuildBranchDetailsId(id: Long): List<JobBuildDetails>
 }

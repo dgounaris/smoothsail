@@ -17,4 +17,6 @@ interface BuildBranchDetailsRepository: JpaRepository<BuildBranchDetails, Long> 
       id: Long,
       status: List<BuildBranchStatus>
   ): BuildBranchDetails?
+
+  fun findFirstByPreviousBuildBranchDetailsId(id: Long): BuildBranchDetails?
 }

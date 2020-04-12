@@ -1,14 +1,20 @@
 package smoothsail.operations.git
 
 import org.springframework.stereotype.Component
+import smoothsail.operations.git.api.GithubApi
 import smoothsail.operations.git.model.GitBranchDetails
 
 @Component
-class GitBranchDetailsRetriever {
+class GitBranchDetailsRetriever(
+    private val githubApi: GithubApi
+) {
 
-  fun retrieve(repository: String, branch: String): GitBranchDetails {
-    // todo retrieve a branch if needed from upstream, and return its info
-    TODO("Implementation pending")
-  }
+  fun retrieve(repository: String, branch: String) =
+      GitBranchDetails(
+          branch,
+          githubApi.pullCheckoutBranch(repository, branch)
+            .repository
+            .findRef(branch).objectId.name
+      )
 
 }

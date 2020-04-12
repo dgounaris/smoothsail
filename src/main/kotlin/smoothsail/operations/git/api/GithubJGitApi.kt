@@ -15,15 +15,12 @@ class GithubJGitApi: GithubApi {
   }
 
   // FIXME THIS NEEDS TO BE AN ATOMIC OPERATION!!!!
-  override fun pullCheckoutBranch(repository: String, branch: String) {
+  override fun pullCheckoutBranch(repository: String, branch: String) =
     Git.cloneRepository()
         .setURI(repository)
         .setDirectory(cloneBaseLocation)
         .setBranchesToClone(listOf(branch))
         .setBranch(branch)
         .call()
-        .repository
-        .findRef("HEAD").objectId.name
-  }
 
 }

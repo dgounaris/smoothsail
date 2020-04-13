@@ -13,8 +13,6 @@ class GitBranchDetailsRetriever(
       GitBranchDetails(
           branch,
           githubApi.pullCheckoutBranch(repository, branch)
-            .repository
-            .findRef(branch).objectId.name
       )
 
 }

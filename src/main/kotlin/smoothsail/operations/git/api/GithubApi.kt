@@ -1,7 +1,5 @@
 package smoothsail.operations.git.api
 
-import org.eclipse.jgit.api.Git
-
 interface GithubApi {
-  fun pullCheckoutBranch(repository: String, branch: String): Git
+  fun pullCheckoutBranch(repository: String, branch: String): String // returns the hash of the branch
 }

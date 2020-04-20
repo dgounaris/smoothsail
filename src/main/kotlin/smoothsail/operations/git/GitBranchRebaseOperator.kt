@@ -1,14 +1,17 @@
 package smoothsail.operations.git
 
 import org.springframework.stereotype.Component
+import smoothsail.operations.git.api.GithubJGitApi
 import smoothsail.operations.git.model.GitBranchDetails
 
 @Component
-class GitBranchRebaseOperator {
+class GitBranchRebaseOperator(
+        private val githubApi: GithubJGitApi
+) {
 
-  fun operate(origin: String, target: String, mergeBranchName: String): GitBranchDetails {
-    //todo merge the two branches in a new branch and upload it
-    TODO()
-  }
-
+  fun operate(repository: String, origin: String, target: String, mergeBranchName: String) =
+          GitBranchDetails(
+                  repository,
+                  githubApi.rebaseAndPush(repository, origin, target, mergeBranchName)
+          )
 }

@@ -43,12 +43,12 @@ internal class RebasedBuildBranchGeneratorTest {
             createdAt = smoothsailClock.now(),
             status = BuildBranchStatus.MERGED
     )
-    `when`(gitBranchRebaseOperator.operate(origin, latestPersisted.currentBuildBranchName, "$origin-rebasedon-${latestPersisted.currentBuildBranchName}"))
+    `when`(gitBranchRebaseOperator.operate(repository, origin, latestPersisted.currentBuildBranchName, "$origin-rebasedon-${latestPersisted.currentBuildBranchName}"))
         .thenReturn(GitBranchDetails("$origin-rebasedon-${latestPersisted.currentBuildBranchName}", "q1w2e3r4"))
     `when`(buildBranchDetailsRepository.save(ArgumentMatchers.any<BuildBranchDetails>())).thenReturn(
         newlyPersisted
     )
-    val result = rebasedBuildBranchGenerator.generateAndSave(origin, latestPersisted)
+    val result = rebasedBuildBranchGenerator.generateAndSave(repository, origin, latestPersisted)
     assertEquals(newlyPersisted, result)
   }
 }

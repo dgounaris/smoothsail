@@ -27,7 +27,7 @@ internal class CreateBuildBranchUseCaseTest {
     val latest = BuildBranchDetails(id = 1L, currentBuildBranchName = "latest")
     val rebased = BuildBranchDetails(id = 2L, currentBuildBranchName = "rebased")
     `when`(latestBuildBranchDetailsRetriever.retrieve(repo, target)).thenReturn(latest)
-    `when`(rebasedBuildBranchGenerator.generateAndSave(origin, latest)).thenReturn(rebased)
+    `when`(rebasedBuildBranchGenerator.generateAndSave(repo, origin, latest)).thenReturn(rebased)
     val result = createBuildBranchUseCase.execute(CreateBuildBranchUseCaseInput(repo, origin, target, jobName, buildNumber))
     assertEquals("rebased", result)
     Mockito.verify(jobBuildDetailsSaveService, Mockito.times(1)).save(jobName, buildNumber, rebased.id)

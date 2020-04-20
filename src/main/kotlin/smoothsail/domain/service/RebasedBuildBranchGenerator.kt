@@ -14,8 +14,9 @@ class RebasedBuildBranchGenerator(
     private val buildBranchDetailsRepository: BuildBranchDetailsRepository,
     private val smoothsailClock: SmoothsailClock
 ) {
-  fun generateAndSave(originBranch: String, latestBuildBranchDetails: BuildBranchDetails): BuildBranchDetails {
+  fun generateAndSave(repository: String, originBranch: String, latestBuildBranchDetails: BuildBranchDetails): BuildBranchDetails {
     val rebasedBranchDetails = gitBranchRebaseOperator.operate(
+        repository,
         originBranch,
         latestBuildBranchDetails.currentBuildBranchName,
         "$originBranch-rebasedon-${latestBuildBranchDetails.currentBuildBranchName}"

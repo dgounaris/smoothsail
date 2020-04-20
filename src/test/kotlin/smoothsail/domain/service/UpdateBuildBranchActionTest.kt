@@ -1,10 +1,8 @@
 package smoothsail.domain.service
 
 import org.junit.Test
-import org.mockito.ArgumentMatchers
 import org.mockito.Mockito
 import org.mockito.Mockito.`when`
-import org.mockito.Mockito.any
 import org.mockito.Mockito.mock
 import smoothsail.domain.BuildBranchDetails
 import smoothsail.domain.BuildBranchStatus

@@ -18,7 +18,7 @@ class CreateBuildBranchUseCase(
         repository = input.repository,
         targetBranch = input.targetBranch
     )
-    val details = rebasedBuildBranchGenerator.generateAndSave(input.originBranch, latestBuildBranchDetails)
+    val details = rebasedBuildBranchGenerator.generateAndSave(input.repository, input.originBranch, latestBuildBranchDetails)
     jobBuildDetailsSaveService.save(input.jobName, input.buildNumber, details.id)
     return details.currentBuildBranchName
   }

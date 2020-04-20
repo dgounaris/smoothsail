@@ -10,15 +10,19 @@ import smoothsail.repository.JobBuildDetailsRepository
 
 @Component
 class UpdateBuildBranchActionSelectionStrategy(
+    private val startedUpdateBuildBranchAction: StartedUpdateBuildBranchAction,
     private val successUpdateBuildBranchAction: SuccessUpdateBuildBranchAction,
     private val failureUpdateBuildBranchAction: FailureUpdateBuildBranchAction,
+    private val abortUpdateBuildBranchAction: AbortUpdateBuildBranchAction,
     private val nullUpdateBuildBranchAction: NullUpdateBuildBranchAction
 ) {
 
   fun select(updatedStatus: BuildBranchStatus) =
     when (updatedStatus) {
+      BuildBranchStatus.STARTED -> startedUpdateBuildBranchAction
       BuildBranchStatus.SUCCESS -> successUpdateBuildBranchAction
       BuildBranchStatus.FAILURE -> failureUpdateBuildBranchAction
+      BuildBranchStatus.ABORTED -> abortUpdateBuildBranchAction
       else -> nullUpdateBuildBranchAction
     }
 }
@@ -62,14 +66,25 @@ class FailureUpdateBuildBranchAction(
               status = BuildBranchStatus.FAILURE
       )
       buildBranchDetailsRepository.save(updated)
-      getJobsToAbort(buildBranchDetails).map {
-        jenkinsJobAbortionOperation.abort(it)
-      }
+      handleNecessaryAborts(updated)
   }
 
-  private fun getJobsToAbort(failedBuildBranch: BuildBranchDetails) =
+  private fun handleNecessaryAborts(buildBranchDetails: BuildBranchDetails) {
+      val jobsToAbortByBuildBranches = getJobsToAbortByBuildBranches(buildBranchDetails)
+      jobsToAbortByBuildBranches.map {
+          jenkinsJobAbortionOperation.abort(it.second)
+      }
+      val updatedAborted = jobsToAbortByBuildBranches.map {
+          it.first.copy(
+                  status = BuildBranchStatus.ABORTED
+          )
+      }
+      buildBranchDetailsRepository.saveAll(updatedAborted)
+  }
+
+  private fun getJobsToAbortByBuildBranches(failedBuildBranch: BuildBranchDetails) =
     getBuildBranchesToAbort(failedBuildBranch).asSequence()
-        .map { jobBuildDetailsRepository.findByBuildBranchDetailsId(it.id).single() }
+        .map { it to jobBuildDetailsRepository.findByBuildBranchDetailsId(it.id).single() }
         .toList()
 
   private fun getBuildBranchesToAbort(failedBuildBranch: BuildBranchDetails): List<BuildBranchDetails> {
@@ -85,6 +100,50 @@ class FailureUpdateBuildBranchAction(
 }
 
 @Component
+class AbortUpdateBuildBranchAction(
+        private val buildBranchDetailsRepository: BuildBranchDetailsRepository,
+        private val jobBuildDetailsRepository: JobBuildDetailsRepository,
+        private val jenkinsJobAbortionOperation: JenkinsJobAbortionOperation
+): UpdateBuildBranchAction {
+    override fun execute(buildBranchDetails: BuildBranchDetails, jobName: String?, buildNumber: Long?) {
+        val updated = buildBranchDetails.copy(
+                status = BuildBranchStatus.ABORTED
+        )
+        buildBranchDetailsRepository.save(updated)
+        handleNecessaryAborts(updated)
+    }
+
+    private fun handleNecessaryAborts(buildBranchDetails: BuildBranchDetails) {
+        val jobsToAbortByBuildBranches = getJobsToAbortByBuildBranches(buildBranchDetails)
+        jobsToAbortByBuildBranches.map {
+            jenkinsJobAbortionOperation.abort(it.second)
+        }
+        val updatedAborted = jobsToAbortByBuildBranches.map {
+            it.first.copy(
+                    status = BuildBranchStatus.ABORTED
+            )
+        }
+        buildBranchDetailsRepository.saveAll(updatedAborted)
+    }
+
+    private fun getJobsToAbortByBuildBranches(failedBuildBranch: BuildBranchDetails) =
+            getBuildBranchesToAbort(failedBuildBranch).asSequence()
+                    .map { it to jobBuildDetailsRepository.findByBuildBranchDetailsId(it.id).single() }
+                    .toList()
+
+    private fun getBuildBranchesToAbort(failedBuildBranch: BuildBranchDetails): List<BuildBranchDetails> {
+        val buildBranches = mutableListOf<BuildBranchDetails>()
+        var chainedBuildBranch = buildBranchDetailsRepository.findFirstByPreviousBuildBranchDetailsId(failedBuildBranch.id)
+        while (chainedBuildBranch != null) {
+            buildBranches.add(chainedBuildBranch)
+            chainedBuildBranch = buildBranchDetailsRepository.findFirstByPreviousBuildBranchDetailsId(chainedBuildBranch.id)
+        }
+        return buildBranches
+    }
+
+}
+
+    @Component
 class NullUpdateBuildBranchAction: UpdateBuildBranchAction {
   override fun execute(buildBranchDetails: BuildBranchDetails, jobName: String?, buildNumber: Long?) {
     // do nothing

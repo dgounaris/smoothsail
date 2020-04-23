@@ -16,6 +16,9 @@ class SuccessUpdateBuildBranchAction(
                 status = BuildBranchStatus.SUCCESS
         )
         buildBranchDetailsRepository.save(updated)
-        // TODO NEED TO MERGE
+        // even during success, the success could be based off a branch that was merged to master, but has obviously
+        // different commit history due to hashes
+        // thus, a rebase here is required pre-merge to not alter history
+
     }
 }

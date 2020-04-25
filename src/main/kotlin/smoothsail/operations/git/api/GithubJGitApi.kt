@@ -3,20 +3,24 @@ package smoothsail.operations.git.api
 import org.eclipse.jgit.api.CheckoutCommand
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.api.MergeCommand
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import java.io.File
 
 
 @Component
-// FIXME THIS CLASS NEEDS TO BE ATOMIC!!!
 class GithubJGitApi: GithubApi {
 
+  @Value("\${git.location}")
+  private lateinit var cloneBaseLocationName: String
+
   private val cloneBaseLocation by lazy {
-    val cloneFile = File("./testgitshit")
+    val cloneFile = File(cloneBaseLocationName)
     cloneFile.mkdirs()
     return@lazy cloneFile
   }
 
+  @Synchronized
   override fun rebaseAndPush(repository: String, origin: String, target: String, newBranchName: String?): String {
     val clonedGitRepo = Git.cloneRepository()
         .setURI(repository)
@@ -45,6 +49,7 @@ class GithubJGitApi: GithubApi {
     }
   }
 
+  @Synchronized
   override fun pullCheckoutBranch(repository: String, branch: String): String =
     Git.cloneRepository()
         .setURI(repository)
@@ -55,6 +60,7 @@ class GithubJGitApi: GithubApi {
             .repository
             .findRef(branch).objectId.name
 
+  @Synchronized
   override fun mergeAndPush(repository: String, origin: String, target: String): String {
     try {
       rebaseAndPush(repository, origin, target)
